@@ -1,0 +1,22 @@
+{
+    "email": {
+        "smtp": {
+            "server": "",
+            "port": "",
+            "connection_type": "tls",
+            "auth": true,
+            "username": "",
+            "password": ""
+        },
+        "sender_address": "",
+        "sender_name": "",
+        "subject": "",
+        "body": "",
+        "enable": true
+    },
+    "website": {
+        "welcome": "welcome text here",
+        "footer": "footer text here",
+        "consider": "what to consider text here"
+    }
+}
