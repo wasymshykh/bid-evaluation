@@ -37,9 +37,9 @@
 
     <section class="admin-message">
         <div class="admin-message-inner">
-            <div class="admin-message-text"><?= $admin_message ?></div>
+            <div class="admin-message-text"><?=$settings->website->welcome?></div>
             <div class="admin-message-button">
-                <a href="https://yourwebsite.com/" target="_blank">Visit our website</a>
+                <a href="https://yourwebsite.com/" class="btn btn-secondary btn-sm" target="_blank">Visit our website</a>
             </div>
         </div>
     </section>
@@ -152,7 +152,7 @@
     <footer class="footer">
         <div class="footer-inner">
 
-            <div class="footer-text"><?= $footer_message ?></div>
+            <div class="footer-text"><?=$settings->website->footer?><div>
 
         </div>
     </footer>

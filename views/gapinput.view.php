@@ -44,6 +44,14 @@
             
             <div class="card col-lg-12">
                 <div class="card-body">
+                    <?php if ((isset($_POST['login']) || !isset($_POST['signup'])) && !empty($errors)): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Error<?=count($errors)>1?'s':''?>!</strong> <ul><?php foreach ($errors as $error): ?><li><?=$error?></li><?php endforeach;?></ul>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <?php endif; ?>
 
                     <div class="row">
                         <div class="col-lg-8">
@@ -137,7 +145,7 @@
                                             <div class="form-group row">
                                                 <label for="sol_impacts_1" class="col-sm-3 col-form-label">Impacts</label>
                                                 <div class="col-sm-6">
-                                                    <input type="text" class="form-control" id="sol_impacts_1" name="sol_risks[]" value="<?=$_POST['sol_risks'][0]??''?>">
+                                                    <input type="text" class="form-control" id="sol_impacts_1" name="sol_impacts[]" value="<?=$_POST['sol_impacts'][0]??''?>">
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <select name="sol_impacts_type[]" class="form-control">
@@ -160,11 +168,11 @@
                                                 <label for="gap">GAP?</label>
                                                 <div>
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="sol_gap_radio[]" id="yes-lbl-1" value="yes">
+                                                        <input class="form-check-input" type="radio" name="sol_gap_radio[]" id="yes-lbl-1" value="yes" <?=(isset($_POST['sol_gap_radio'][0]) && $_POST['sol_gap_radio'][0] == 'yes')?'checked':''?>>
                                                         <label class="form-check-label" for="yes-lbl-1">Yes</label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="sol_gap_radio[]" id="no-lbl-1" value="no">
+                                                        <input class="form-check-input" type="radio" name="sol_gap_radio[]" id="no-lbl-1" value="no" <?=(isset($_POST['sol_gap_radio'][0]) && $_POST['sol_gap_radio'][0] == 'no')?'checked':''?>>
                                                         <label class="form-check-label" for="no-lbl-1">No</label>
                                                     </div>
                                                 </div>
@@ -182,7 +190,6 @@
                                 </div>
                             </div>
 
-
                         </div>
                     </div>
                     
@@ -195,13 +202,13 @@
                                 <label for="">Recommendation</label>
                                 <div class="row">
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="sol_recommendation" name="sol_recommendation" value="<?=$_POST['sol_recommendation']??''?>">
+                                        <input type="text" class="form-control" id="sol_recommendation_text" name="sol_recommendation_text" value="<?=$_POST['sol_recommendation_text']??''?>">
                                     </div>
                                     <div class="col-sm-3">
                                         <select name="sol_recommendation" class="form-control">
                                             <option value="yes" <?=(isset($_POST['sol_recommendation']) && $_POST['sol_recommendation'] == 'yes')?'selected':''?>>Yes</option>
                                             <option value="maybe" <?=(isset($_POST['sol_recommendation']) && $_POST['sol_recommendation'] == 'maybe')?'selected':''?>>Maybe</option>
-                                            <option value="nobid" <?=(isset($_POST['sol_recommendation']) && $_POST['sol_recommendation'] == 'nobid')?'selected':''?>>No Bid</option>
+                                            <option value="no" <?=(isset($_POST['sol_recommendation']) && $_POST['sol_recommendation'] == 'no')?'selected':''?>>No Bid</option>
                                         </select>
                                     </div>
                                 </div>

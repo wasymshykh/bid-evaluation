@@ -1,5 +1,7 @@
 <?php
 
+$read_json = true;
+
 require_once 'includes/config.php';
 
 if (isset($_POST) && !empty($_POST)) {
@@ -158,8 +160,5 @@ if (isset($_POST) && !empty($_POST)) {
     }
 
 }
-
-$admin_message = "hello World";
-$footer_message = "I am footer";
 
 require_once DIR.'views/index.view.php';

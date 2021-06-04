@@ -107,6 +107,22 @@ function check_login ()
 
 }
 
+function get_sol_by_id ($sol_id)
+{
+    global $db;
+    $q = "SELECT * FROM `solicitations` JOIN `users` ON `solicitation_user_id` = `user_id` WHERE `solicitation_id` = :s";
+    $st = $db->prepare($q);
+    $st->bindParam(":s", $sol_id);
+    if ($st->execute()) {
+        if ($st->rowCount() > 0) {
+            return ['status' => true, 'data' => $st->fetch()];
+        } 
+        return ['status' => false, 'data' => 'Solicitation not found'];
+    }
+    
+    return ['status' => false, 'data' => 'Unable to get the data'];
+}
+
 function read_json_data ($file)
 {
     
