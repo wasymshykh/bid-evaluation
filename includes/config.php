@@ -49,7 +49,6 @@
         } else {
             die('E.01: Failure');
         }
-        return false;
     }
     $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
@@ -63,4 +62,10 @@
             $errors[] = $_SESSION['message']['data'];
         }
         unset($_SESSION['message']);
+    }
+
+    // reading the data.json file
+    if (isset($read_json) && $read_json) {
+        define ('DATA_FILE_PATH', DIR.'data.json');
+        $settings = read_json_data(DATA_FILE_PATH);
     }

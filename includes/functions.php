@@ -107,6 +107,41 @@ function check_login ()
 
 }
 
+function read_json_data ($file)
+{
+    
+    // check if the file exists
+    if (file_exists($file)) {
+        // read-only file mode
+        $handle = fopen($file, "r+") or die("Unable to read data configuration file.");
+        $file_size = filesize($file);
+        if ($file_size === 0) { $file_size = 1; }
+        $contents = fread($handle, $file_size);
+        fclose($handle);
+        $json = json_decode($contents);
+        return $json;
+    } else {
+        // error is printed
+        die('Data configuration file not found.');
+    }
+    
+}
+
+function save_json_data ($file, $settings)
+{
+    
+    if (file_exists($file) && is_writable($file) && filesize($file) != 0) {
+        $handle = fopen($file, "w+") or die("Unable to read data configuration file.");
+        fwrite($handle, json_encode($settings));
+        fclose($handle);
+
+        return ['status' => true];
+    } 
+
+    return ['status' => false];
+}
+
+
 function logout ()
 {
     unset($_SESSION['logged']);

@@ -1,5 +1,6 @@
 body {
     background-color: #f1f1f1;
+    scroll-behavior: smooth;
 }
 
 .landing-header {
@@ -50,4 +51,8 @@ body {
 
 .footer-text {
     font-size: 0.9em;
+}
+
+.border-dashed-bottom {
+    border-bottom: 1px dashed #e0e0e0;
 }
