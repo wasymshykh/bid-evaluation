@@ -130,12 +130,22 @@
                             <tbody>
                                 <?php if (!empty($sols)): foreach ($sols as $sol): ?>
                                 <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td><?=$sol['solicitation_title']?></td>
+                                    <td><?=normal_date($sol['solicitation_created'])?></td>
+                                    <td><?=$sol['solicitation_calculated_pwin']?></td>
+                                    <td><?=$sol['solicitation_cc']?></td>
+                                    <td>
+                                        <form action="" method="post">
+                                            <input type="hidden" name="sol_id" value="<?=$sol['solicitation_id']?>">
+                                            <button type="submit" name="send_mail" class="table-btn"><img src="<?=URL?>/assets/images/icons/mail-icon.svg" alt="Send"></button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <form action="" method="post">
+                                            <input type="hidden" name="sol_id" value="<?=$sol['solicitation_id']?>">
+                                            <button type="submit" name="delete" class="table-btn"><img src="<?=URL?>/assets/images/icons/delete-icon.svg" alt="Delete"></button>
+                                        </form>
+                                    </td>
                                 </tr>
                                 <?php endforeach; else: ?>
                                 <tr><td colspan="6" class="text-center"><i>no record found.</i></td></tr>
@@ -156,7 +166,7 @@
     <footer class="footer">
         <div class="footer-inner">
 
-            <div class="footer-text"><?= $footer_message ?></div>
+            <div class="footer-text"><?=$settings->website->footer?><div>
 
         </div>
     </footer>

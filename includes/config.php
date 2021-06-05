@@ -28,7 +28,7 @@
     
     // Functions
     require_once DIR . 'includes/functions.php';
-    
+
     // reading the data.json file
     if (isset($read_json) && $read_json) {
        define ('DATA_FILE_PATH', DIR.'data.json');
@@ -37,18 +37,20 @@
        if (isset($activate_mailer) && $activate_mailer) {
            // Mailer settings
                // server settings
-           define('SMTP_HOST', 'smtp.mailtrap.io');
-           define('SMTP_AUTH', true); // smtp server requires authentication? true or false
-           define('SMTP_USERNAME', '512427b219e68e');
-           define('SMTP_PASSWORD', '423d8d30747d4f');
-           define('SMTP_ENCRYPTION', 'tls'); // either tls or smtps
-           define('SMTP_PORT', 587); // default is 468
+           define('SMTP_HOST', $settings->email->smtp->server);
+           define('SMTP_AUTH', $settings->email->smtp->auth); // smtp server requires authentication? true or false
+           define('SMTP_USERNAME', $settings->email->smtp->username);
+           define('SMTP_PASSWORD', $settings->email->smtp->password);
+           define('SMTP_ENCRYPTION', $settings->email->smtp->connection_type); // either tls or smtps
+           define('SMTP_PORT', $settings->email->smtp->port); // default is 468
                // mail settings
-           define('MAIL_FROM', 'mail@yourwebsite.com');
-           define('MAIL_FROM_NAME', 'Mailer');
-           define('MAXIMUM_CC_FIELDS', 4);
-       }
-   }
+           define('MAIL_FROM', $settings->email->sender_address);
+           define('MAIL_FROM_NAME', $settings->email->sender_name);
+        }
+    }
+
+    // cc fields are shown in output page
+    define('MAXIMUM_CC_FIELDS', 4);
 
     $dsn = 'mysql:host=' . DB_HOST . '; dbname=' . DB_NAME;
     try {

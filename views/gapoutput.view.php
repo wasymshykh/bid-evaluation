@@ -159,8 +159,8 @@ tr td {
                                 <tr>
                                     <?php foreach ($reqs as $req): ?>
                                     <td style="width: 40%;"><?=$req['requirement_title']?></td>
-                                    <td style="width: 10%; background-color: <?=$req['calculated_gap'][2]?>"><?=$req['calculated_gap'][1]?></td>
-                                    <td style="width: 15%; background-color: <?=$req['calculated_risk_rating'][2]?>"><?=$req['calculated_risk_rating'][1]?></td>
+                                    <td style="width: 10%; background-color: <?=$req['calculated_gap'][2]?>"><?=$req['calculated_gap'][1]?> (<?=$req['calculated_gap'][0]?>)</td>
+                                    <td style="width: 15%; background-color: <?=$req['calculated_risk_rating'][2]?>"><?=$req['calculated_risk_rating'][1]?> (<?=$req['calculated_risk_rating'][0]?>)</td>
                                     <td style="width: 35%;"><?=$req['requirement_action_items']?></td>
                                     <?php endforeach; ?>
                                 </tr>
@@ -181,24 +181,25 @@ tr td {
                         <td style="border-bottom: 1px solid #777;padding-bottom: 15px">
                             <table style="width: 100%;">
                                 <tr>
-                                    <td class="p-win p-win-1"><div>Bid</div></td>
-                                    <td class="p-win p-win-2 active"><div>Agree / Likely</div></td>
-                                    <td class="p-win p-win-3"><div>Agree / Maybe</div></td>
-                                    <td class="p-win p-win-4"><div>Neutral</div></td>
-                                    <td class="p-win p-win-5"><div>Low P-win</div></td>
-                                    <td class="p-win p-win-6"><div>No BID</div></td>
+                                    <td class="p-win p-win-1 <?=$pwin_table_index == 0?'active':''?>"><div>Bid</div></td>
+                                    <td class="p-win p-win-2 <?=$pwin_table_index == 1?'active':''?>"><div>Agree / Likely</div></td>
+                                    <td class="p-win p-win-3 <?=$pwin_table_index == 2?'active':''?>"><div>Agree / Maybe</div></td>
+                                    <td class="p-win p-win-4 <?=$pwin_table_index == 3?'active':''?>"><div>Neutral</div></td>
+                                    <td class="p-win p-win-5 <?=$pwin_table_index == 4?'active':''?>"><div>Low P-win</div></td>
+                                    <td class="p-win p-win-6 <?=$pwin_table_index == 5?'active':''?>"><div>No BID</div></td>
                                 </tr>
                                 <tr>
-                                    <td></td>
-                                    <td class="p-win-this">
-                                        <div class="image">
-                                            <img src="<?=URL?>/assets/images/icons/this-bg.png">
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <?php for ($i = 0; $i < 6; $i++): ?>
+                                        <?php if ($pwin_table_index === $i):?>
+                                            <td class="p-win-this">
+                                                <div class="image">
+                                                    <img src="<?=URL?>/assets/images/icons/this-bg.png">
+                                                </div>
+                                            </td>
+                                        <?php else: ?>
+                                            <td></td>
+                                        <?php endif; ?>
+                                    <?php endfor; ?>
                                 </tr>
                             </table>
                         </td>

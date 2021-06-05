@@ -1,9 +1,17 @@
 <?php
 
+use Spipu\Html2Pdf\Html2Pdf;
+use Spipu\Html2Pdf\Exception\Html2PdfException;
+use Spipu\Html2Pdf\Exception\ExceptionFormatter;
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+
 $read_json = true;
 $activate_mailer = true;
 
 require_once 'includes/config.php';
+require_once 'vendor/autoload.php';
 
 // checking the login
 if (!isset($_GET['allow'])) {
@@ -43,12 +51,31 @@ $current_date = new DateTime(date('Y/m/d'));
 
 $days_due = (int)$current_date->diff($due_date)->format("%r%a");
 
+$c_gaps = [];
+$c_risks = [];
+
+$ability = (int)$sol['solicitation_ability'];
 foreach ($reqs as $i => $req) {
     $gap = $req['requirement_gap'] == '1' ? 'yes' : 'no';
-    $ability = (int)$sol['solicitation_ability'];
     $reqs[$i]['calculated_gap'] = calculate_gap ($gap, $ability);
     $reqs[$i]['calculated_risk_rating'] = calculate_risk_rating ($req['requirement_risks_type'], $req['requirement_impacts_type']);
+
+    array_push($c_gaps, $reqs[$i]['calculated_gap'][0]);
+    array_push($c_risks, $reqs[$i]['calculated_risk_rating'][0]);
 }
+
+$c_gaps = array_filter($c_gaps);
+$c_gaps_average = 0;
+if(count($c_gaps)) {
+    $c_gaps_average = round(array_sum($c_gaps)/count($c_gaps));
+}
+$c_risks = array_filter($c_risks);
+$c_risks_average = 0;
+if(count($c_risks)) {
+    $c_risks_average = round(array_sum($c_risks)/count($c_risks));
+}
+$pwin = calculate_pwin($c_gaps_average, $c_risks_average, $ability);
+$pwin_table_index = get_pwin_table_index($pwin);
 
 if (isset($_POST) && !empty($_POST)) {
     
@@ -78,12 +105,73 @@ if (isset($_POST) && !empty($_POST)) {
                 $errors[] = "You can add maximum of ".MAXIMUM_CC_FIELDS. " CC emails";
             } else {
 
-                // generating pdf 
-                
-                // sending email then adding record to the database
-                
+                $db->beginTransaction();
 
+                try {
 
+                    // generating pdf 
+                        // getting contents
+                    ob_start();
+                    include DIR.'views/gapoutput.pdf.view.php';
+                    $response = ob_get_contents();
+                    ob_end_clean();
+
+                    $pdf_name = "solicitation-$sol_id.pdf";
+                    
+                    // setting content to generate pdf
+                    try {
+                        $html2pdf = new Html2Pdf('P', 'A4', 'en');
+                        $html2pdf->setDefaultFont('Arial');
+                        $html2pdf->writeHTML($response);
+                        $pdf_content = $html2pdf->output($pdf_name, 'S');
+                    } catch (Html2PdfException $e) {
+                        $html2pdf->clean();
+                        $formatter = new ExceptionFormatter($e);
+                        throw new Exception("Error: 01 - Unable to send.");
+                    }
+
+                    // adding record to the database 
+                    $q = "UPDATE `solicitations` SET `solicitation_mailed` = '1', `solicitation_blob` = :b, `solicitation_calculated_pwin` = :p, `solicitation_generated` = :g, `solicitation_cc` = :cc WHERE `solicitation_id` = :i";
+                    $st = $db->prepare($q);
+                    $st->bindParam(":b", $pdf_content);
+                    $st->bindParam(":p", $pwin);
+                    $dt = current_date();
+                    $st->bindParam(":g", $dt);
+                    $f_cc = implode("|", $unique_cc);
+                    $st->bindParam(":cc", $f_cc);
+                    $st->bindParam(":i", $sol_id);
+                    if (!$st->execute()) {
+                        throw new Exception("Unable to update record.");
+                    }
+                    // adding requirements update
+                    foreach ($reqs as $req) {
+                        $q = "UPDATE `requirements` SET `requirement_calculated_gap` = :g, `requirement_calculated_risk_rating` = :r WHERE `requirement_id` = :i";
+                        $st = $db->prepare($q);
+                        $st->bindParam(":i", $req['requirement_id']);
+                        $g = json_encode($req['calculated_gap']);
+                        $st->bindParam(":g", $g);
+                        $r = json_encode($req['calculated_risk_rating']);
+                        $st->bindParam(":r", $r);
+                        if (!$st->execute()) {
+                            throw new Exception("Unable to update record.");
+                        }
+                    }
+
+                    // sending email
+                    $mail = new PHPMailer(true);
+                    $r = mail_sender ($mail, $settings->email->subject, $settings->email->body, $logged['user_email'], $logged['user_fullname'], $unique_cc, $pdf_content, $pdf_name);
+                    if ($r['status']) {
+                        $db->commit();
+                        go(URL.'/success.php');
+                    } else {
+                        throw new Exception("Unable to send email.");
+                    }
+                    
+                } catch (Exception $e) {
+                    $db->rollBack();
+                    $errors[] = "Error: 02 - Unable to send.";
+                }
+                
             }
         }
 
