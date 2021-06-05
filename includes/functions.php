@@ -141,6 +141,21 @@ function get_sols_by_user_id ($user_id)
     return ['status' => false, 'data' => 'Unable to get the data'];
 }
 
+function get_sols ()
+{
+    global $db;
+    $q = "SELECT * FROM `solicitations` JOIN `users` ON `solicitation_user_id` = `user_id` WHERE `solicitation_calculated_pwin` IS NOT NULL";
+    $st = $db->prepare($q);
+    if ($st->execute()) {
+        if ($st->rowCount() > 0) {
+            return ['status' => true, 'data' => $st->fetchAll()];
+        } 
+        return ['status' => false, 'data' => 'Solicitation not found'];
+    }
+    
+    return ['status' => false, 'data' => 'Unable to get the data'];
+}
+
 function get_requirements_by_sol_id ($sol_id)
 {
     global $db;

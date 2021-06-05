@@ -1,5 +1,6 @@
 <?php
 
+$read_json = true;
 require_once 'includes/config.php';
 
 // checking the login
@@ -112,6 +113,7 @@ if (isset($_POST) && !empty($_POST)) {
 
             // inserting data
             $data['solicitation_user_id'] = $logged['user_id'];
+            $data['solicitation_created'] = current_date();
 
             $col = "";
             $val = "";

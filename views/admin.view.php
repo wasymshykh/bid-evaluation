@@ -29,7 +29,7 @@
 
             <div class="landing-header-right">
                 <div>
-                    <a href="<?=URL?>" class="btn btn-secondary btn-sm">Go to landing</a>
+                    <a href="<?=URL?>/account.php" class="btn btn-secondary btn-sm">Go to account</a>
                 </div>
                 <p><small><?=current_date('d M Y h:i A')?></small></p>
             </div>

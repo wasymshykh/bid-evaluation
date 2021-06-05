@@ -156,14 +156,14 @@ tr td {
                                     <th style="width: 15%;">Risk Rating</th>
                                     <th style="width: 35%;border-right: none">Action Items</th>
                                 </tr>
+                                <?php foreach ($reqs as $req): ?>
                                 <tr>
-                                    <?php foreach ($reqs as $req): ?>
                                     <td style="width: 40%;"><?=$req['requirement_title']?></td>
                                     <td style="width: 10%; background-color: <?=$req['calculated_gap'][2]?>"><?=$req['calculated_gap'][1]?> (<?=$req['calculated_gap'][0]?>)</td>
                                     <td style="width: 15%; background-color: <?=$req['calculated_risk_rating'][2]?>"><?=$req['calculated_risk_rating'][1]?> (<?=$req['calculated_risk_rating'][0]?>)</td>
                                     <td style="width: 35%;"><?=$req['requirement_action_items']?></td>
-                                    <?php endforeach; ?>
                                 </tr>
+                                <?php endforeach; ?>
                             </table>
                         </td>
                     </tr>

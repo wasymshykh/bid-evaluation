@@ -12,6 +12,12 @@ if (!$logged['status']) {
 }
 $logged = $logged['data'];
 
+// checking if the user is admin
+if ($logged['user_isAdmin'] !== '1') {
+    $_SESSION['message'] = ['type' => 'error', 'data' => 'You dont have permission to access that page.'];
+    go (URL.'/account.php');
+}
+
 $profile_errors = [];
 $password_errors = [];
 $app_errors = [];

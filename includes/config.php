@@ -12,7 +12,7 @@
         error_reporting(0);
     }
 
-    // with ending slash '/'
+    // without ending slash '/'
     define ('URL', 'http://localhost/bid-evaluation');
 
     // Database details

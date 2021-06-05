@@ -76,7 +76,7 @@ if (isset($_POST) && !empty($_POST)) {
             if ($sol['status']) {
                 $sol = $sol['data'];
 
-                if ($sol['solicitation_user_id'] != $logged['user_id']) {
+                if (($sol['solicitation_user_id'] != $logged['user_id']) && $logged['user_isAdmin'] != '1') {
                     $errors[] = "You don't have permission to access that solicitation";
                 } else if (empty($sol['solicitation_blob'])) {
                     $errors[] = "Solicitation wasn't generated properly";
@@ -117,17 +117,63 @@ if (isset($_POST) && !empty($_POST)) {
 
         }
 
+    }  else if (isset($_POST['update_password'])) {
+
+        if (isset($_POST['password']) && !empty($_POST['password']) && is_string($_POST['password']) && !empty(normal_text($_POST['password']))) {
+            $password = normal_text($_POST['password']);
+
+            if (mb_strlen($password) < 9) {
+                $password_errors[] = "Password must contain at least 8 characters.";
+            } else if (isset($_POST['repassword']) && !empty($_POST['repassword']) && is_string($_POST['repassword']) && !empty(normal_text($_POST['repassword']))) {
+                $repassword = normal_text($_POST['repassword']);
+
+                if ($password !== $repassword) {
+                    $password_errors[] = "Passwords do not match, retype";
+                } else {
+                    $password = password_hash($password, PASSWORD_BCRYPT);
+                }
+            } else {
+                $password_errors[] = "Retype the password!";
+            }
+        } else {
+            $password_errors[] = "Password cannot be empty!";
+        }
+
+        if (empty($password_errors)) {
+            $q = "UPDATE `users` SET `user_password` = :p WHERE `user_id` = :i";
+            $st = $db->prepare($q);
+            
+            $st->bindParam(":p", $password);
+            $st->bindParam(":i", $logged['user_id']);
+            if ($st->execute()) {
+                $_SESSION['message'] = ['type' => 'success', 'data' => 'Password updated successfully!'];
+                go(URL.'/account.php');
+            } else {
+                $password_errors[] = "Unable to update the password";
+            }
+        }
+
+
     }
     
-
 }
 
-$sols = get_sols_by_user_id ($logged['user_id']);
-if ($sols['status']) {
-    $sols = $sols['data'];
+if ($logged['user_isAdmin'] == '0') {
+    $sols = get_sols_by_user_id ($logged['user_id']);
+    if ($sols['status']) {
+        $sols = $sols['data'];
+    } else {
+        $sols = [];
+    }
 } else {
-    $sols = [];
-}
 
+    $sols = get_sols ();
+    if ($sols['status']) {
+        $sols = $sols['data'];
+    } else {
+        $sols = [];
+    }
+
+}
 
 require_once DIR.'views/account.view.php';
