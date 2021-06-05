@@ -21,24 +21,34 @@
     define('DB_USER', 'root');
     define('DB_PASS', '');
 
-    // Mailer settings
-        // server settings
-    define('SMTP_HOST', 'smtp.mailtrap.io');
-    define('SMTP_AUTH', true); // smtp server requires authentication? true or false
-    define('SMTP_USERNAME', '512427b219e68e');
-    define('SMTP_PASSWORD', '423d8d30747d4f');
-    define('SMTP_ENCRYPTION', 'tls'); // either tls or smtps
-    define('SMTP_PORT', 587); // default is 468
-        // mail settings
-    define('MAIL_FROM', 'mail@yourwebsite.com');
-    define('MAIL_FROM_NAME', 'Mailer');
-
+    
     // Timezone setting
     define('TIMEZONE', 'Europe/Berlin');
     date_default_timezone_set(TIMEZONE);
-
+    
     // Functions
     require_once DIR . 'includes/functions.php';
+    
+    // reading the data.json file
+    if (isset($read_json) && $read_json) {
+       define ('DATA_FILE_PATH', DIR.'data.json');
+       $settings = read_json_data(DATA_FILE_PATH);
+   
+       if (isset($activate_mailer) && $activate_mailer) {
+           // Mailer settings
+               // server settings
+           define('SMTP_HOST', 'smtp.mailtrap.io');
+           define('SMTP_AUTH', true); // smtp server requires authentication? true or false
+           define('SMTP_USERNAME', '512427b219e68e');
+           define('SMTP_PASSWORD', '423d8d30747d4f');
+           define('SMTP_ENCRYPTION', 'tls'); // either tls or smtps
+           define('SMTP_PORT', 587); // default is 468
+               // mail settings
+           define('MAIL_FROM', 'mail@yourwebsite.com');
+           define('MAIL_FROM_NAME', 'Mailer');
+           define('MAXIMUM_CC_FIELDS', 4);
+       }
+   }
 
     $dsn = 'mysql:host=' . DB_HOST . '; dbname=' . DB_NAME;
     try {
@@ -64,8 +74,4 @@
         unset($_SESSION['message']);
     }
 
-    // reading the data.json file
-    if (isset($read_json) && $read_json) {
-        define ('DATA_FILE_PATH', DIR.'data.json');
-        $settings = read_json_data(DATA_FILE_PATH);
-    }
+   

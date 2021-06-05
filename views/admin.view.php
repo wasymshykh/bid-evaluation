@@ -37,7 +37,6 @@
         </div>
     </header>
 
-    
     <?php if (isset($success) && !empty($success)): ?>
     <div class="container mt-4">
         <div class="row">

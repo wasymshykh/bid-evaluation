@@ -123,6 +123,78 @@ function get_sol_by_id ($sol_id)
     return ['status' => false, 'data' => 'Unable to get the data'];
 }
 
+function get_requirements_by_sol_id ($sol_id)
+{
+    global $db;
+    $q = "SELECT * FROM `requirements` WHERE `requirement_solicitation_id` = :s";
+    $st = $db->prepare($q);
+    $st->bindParam(":s", $sol_id);
+    if ($st->execute()) {
+        if ($st->rowCount() > 0) {
+            return ['status' => true, 'data' => $st->fetchAll()];
+        } 
+        return ['status' => false, 'data' => 'Requirements not found'];
+    }
+    
+    return ['status' => false, 'data' => 'Unable to get the data'];
+}
+
+function calculate_gap ($gap, $ability)
+{
+    if ($gap == 'yes') {
+
+        if ($ability >= 0 && $ability <= 25) {
+            return [0, 'Low', 'red'];
+        } else if ($ability >= 26 && $ability <= 50) {
+            return [1, 'Low', 'orange'];
+        } else if ($ability >= 51 && $ability <= 75) {
+            return [2, 'Medium', 'yellow'];
+        } else if ($ability >= 76 && $ability <= 100) {
+            return [3, 'Medium', 'green'];
+        }
+
+    } else if ($gap == 'no') {
+
+        if ($ability >= 0 && $ability <= 25) {
+            return [3, 'Low', 'orange'];
+        } else if ($ability >= 26 && $ability <= 50) {
+            return [4, 'Medium', 'yellow'];
+        } else if ($ability >= 51 && $ability <= 75) {
+            return [5, 'High', 'green'];
+        } else if ($ability >= 76 && $ability <= 100) {
+            return [6, 'High', 'green'];
+        }
+
+    }
+
+    return [0, '-', ''];
+}
+
+function calculate_risk_rating ($risk, $impact)
+{
+    if ($impact == 'low' && $risk == 'low') {
+        return [1, 'Low', 'yellowgreen'];
+    } else if ($impact == 'low' && $risk == 'med') {
+        return [2, 'Low', 'yellowgreen'];
+    } else if ($impact == 'low' && $risk == 'high') {
+        return [3, 'Medium', 'yellow'];
+    } else if ($impact == 'med' && $risk == 'low') {
+        return [2, 'Low', 'yellowgreen'];
+    } else if ($impact == 'med' && $risk == 'med') {
+        return [4, 'Medium', 'yellow'];
+    } else if ($impact == 'med' && $risk == 'high') {
+        return [6, 'High', 'red'];
+    } else if ($impact == 'high' && $risk == 'low') {
+        return [3, 'Medium', 'yellow'];
+    } else if ($impact == 'high' && $risk == 'med') {
+        return [6, 'High', 'red'];
+    } else if ($impact == 'high' && $risk == 'high') {
+        return [9, 'High', 'red'];
+    }
+
+    return [0, '-', ''];
+}
+
 function read_json_data ($file)
 {
     
